@@ -1,0 +1,29 @@
+---
+- name: ensure fluentd dirs
+  file:
+    dest: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ fluentd_dir }}'
+    - '{{ fluentd_log_dir }}'
+    - '{{ fluentd_buffer_dir }}'
+
+- name: ensure fluentd config
+  template:
+    src: fluentd.conf.j2
+    dest: '{{ fluentd_dir }}/fluent.conf'
+
+- name: run fluentd_logger container
+  docker_container:
+    state: started
+    restart: yes
+    recreate: yes
+    name: '{{ fluentd_container_name }}'
+    image: '{{ fluentd_image }}:{{ fluentd_version }}'
+    restart_policy: always
+    published_ports: '{{ fluentd_published_ports }}'
+    links: '{{ fluentd_links }}'
+    volumes:
+      - '{{ fluentd_dir }}/fluent.conf:/fluentd/etc/fluent.conf:ro'
+      - '{{ fluentd_buffer_dir }}:/fluentd/buffer'
+      - '{{ fluentd_log_dir }}:/fluentd/log'

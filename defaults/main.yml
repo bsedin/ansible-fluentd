@@ -1,0 +1,11 @@
+---
+fluentd_dir: /opt/docker/services/fluentd
+fluentd_log_dir: /var/log/fluentd
+fluentd_buffer_dir: '{{ fluentd_dir }}/buffer'
+fluentd_image: kr3ssh/fluentd-logger
+fluentd_version: latest
+fluentd_container_name: fluentd
+fluentd_elasticsearch_host: localhost
+fluentd_elasticsearch_port: 9200
+fluentd_links: []
+fluentd_published_ports: []
