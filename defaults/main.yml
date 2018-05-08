@@ -8,4 +8,5 @@ fluentd_container_name: fluentd
 fluentd_elasticsearch_host: localhost
 fluentd_elasticsearch_port: 9200
 fluentd_links: []
+fluentd_networks: []
 fluentd_published_ports: []

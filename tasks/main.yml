@@ -23,6 +23,7 @@
     restart_policy: always
     published_ports: '{{ fluentd_published_ports }}'
     links: '{{ fluentd_links }}'
+    networks: '{{ fluentd_networks }}'
     volumes:
       - '{{ fluentd_dir }}/fluent.conf:/fluentd/etc/fluent.conf:ro'
       - '{{ fluentd_buffer_dir }}:/fluentd/buffer'
