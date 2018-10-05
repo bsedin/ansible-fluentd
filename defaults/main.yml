@@ -1,5 +1,5 @@
 ---
-fluentd_dir: /opt/docker/services/fluentd
+fluentd_dir: /var/lib/fluentd
 fluentd_log_dir: /var/log/fluentd
 fluentd_buffer_dir: '{{ fluentd_dir }}/buffer'
 fluentd_image: kr3ssh/fluentd-logger
