@@ -1,12 +1,79 @@
 ---
-fluentd_dir: /var/lib/fluentd
-fluentd_log_dir: /var/log/fluentd
+fluentd_dir: /var/lib/{{ fluentd_container_name }}
+fluentd_log_dir: /var/log/{{ fluentd_container_name }}
 fluentd_buffer_dir: '{{ fluentd_dir }}/buffer'
-fluentd_image: kr3ssh/fluentd-logger
 fluentd_version: latest
+fluentd_image: kr3ssh/fluentd-logger:{{ fluentd_version }}
 fluentd_container_name: fluentd
 fluentd_elasticsearch_host: localhost
 fluentd_elasticsearch_port: 9200
 fluentd_links: []
 fluentd_networks: []
 fluentd_published_ports: []
+fluentd_env: {}
+fluentd_volumes:
+  - '{{ fluentd_dir }}/fluent.conf:/fluentd/etc/fluent.conf:ro'
+  - '{{ fluentd_buffer_dir }}:/fluentd/buffer'
+  - '{{ fluentd_log_dir }}:/fluentd/log'
+fluentd_conf: |
+  <source>
+    @type  forward
+    @id    input1
+    @label @mainstream
+    bind   0.0.0.0
+    port   24224
+  </source>
+
+  <filter **>
+    @type stdout
+  </filter>
+
+  <label @mainstream>
+    <filter docker.**>
+      @type record_transformer
+      enable_ruby true
+      <record>
+        docker_host {{ hostname }}
+        @timestamp ${ require 'time'; Time.now.utc.iso8601(3) }
+      </record>
+    </filter>
+
+    <match docker.**>
+      @type elasticsearch
+      @id docker
+      logstash_format true
+      logstash_prefix logstash
+      host {{ fluentd_elasticsearch_host }}
+      port {{ fluentd_elasticsearch_port }}
+      flush_interval 5s
+      index_name fluentd
+      type_name fluentd
+      include_tag_key true
+      buffer_type file
+      buffer_path /fluentd/buffer/docker.elasticsearch.*.buffer
+      reload_connections false
+      time_key_format %Y-%m-%dT%H:%M:%S.%N%z
+    </match>
+
+    <match fluent.**>
+      @type file
+      @id fluent
+      path /fluentd/log/fluent.*.log
+      flush_interval 5s
+      append true
+      time_slice_format %Y%m%d
+      time_slice_wait 10m
+      time_format %Y%m%dT%H%M%S%z
+    </match>
+
+    <match **>
+      @type file
+      @id output1
+      path /fluentd/log/data.*.log
+      flush_interval 5s
+      append true
+      time_slice_format %Y%m%d
+      time_slice_wait 10m
+      time_format %Y%m%dT%H%M%S%z
+    </match>
+  </label>

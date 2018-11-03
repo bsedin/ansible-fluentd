@@ -10,7 +10,7 @@
 
 - name: ensure fluentd config
   template:
-    src: fluentd.conf.j2
+    src: fluent.conf.j2
     dest: '{{ fluentd_dir }}/fluent.conf'
 
 - name: run fluentd_logger container
@@ -18,13 +18,12 @@
     state: started
     restart: yes
     recreate: yes
+    pull: true
     name: '{{ fluentd_container_name }}'
-    image: '{{ fluentd_image }}:{{ fluentd_version }}'
+    image: '{{ fluentd_image }}'
     restart_policy: always
     published_ports: '{{ fluentd_published_ports }}'
     links: '{{ fluentd_links }}'
     networks: '{{ fluentd_networks }}'
-    volumes:
-      - '{{ fluentd_dir }}/fluent.conf:/fluentd/etc/fluent.conf:ro'
-      - '{{ fluentd_buffer_dir }}:/fluentd/buffer'
-      - '{{ fluentd_log_dir }}:/fluentd/log'
+    volumes: '{{ fluentd_volumes }}'
+    env: '{{ fluentd_env }}'
