@@ -12,6 +12,7 @@
   template:
     src: fluent.conf.j2
     dest: '{{ fluentd_dir }}/fluent.conf'
+    force: yes
 
 - name: run fluentd_logger container
   docker_container:

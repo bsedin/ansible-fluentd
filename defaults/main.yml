@@ -50,7 +50,7 @@ fluentd_conf: |
       type_name fluentd
       include_tag_key true
       buffer_type file
-      buffer_path /fluentd/buffer/docker.elasticsearch.*.buffer
+      buffer_path /fluentd/buffer/docker.*.buffer
       reload_connections false
       time_key_format %Y-%m-%dT%H:%M:%S.%N%z
     </match>
