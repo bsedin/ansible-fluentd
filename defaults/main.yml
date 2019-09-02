@@ -5,8 +5,9 @@ fluentd_buffer_dir: '{{ fluentd_dir }}/buffer'
 fluentd_version: latest
 fluentd_image: kr3ssh/fluentd-logger:{{ fluentd_version }}
 fluentd_container_name: fluentd
-fluentd_elasticsearch_host: localhost
-fluentd_elasticsearch_port: 9200
+fluentd_elasticsearch_hosts: []
+fluentd_elasticsearch_user: ''
+fluentd_elasticsearch_password: ''
 fluentd_links: []
 fluentd_networks: []
 fluentd_published_ports: []
@@ -43,8 +44,9 @@ fluentd_conf: |
       @id docker
       logstash_format true
       logstash_prefix logstash
-      host {{ fluentd_elasticsearch_host }}
-      port {{ fluentd_elasticsearch_port }}
+      hosts {{ fluentd_elasticsearch_hosts }}
+      user {{ fluentd_elasticsearch_user }}
+      password {{ fluentd_elasticsearch_password }}
       flush_interval 5s
       index_name fluentd
       type_name fluentd
